@@ -59,7 +59,6 @@ function App() {
     jsonResponse.json().then((responseData) => { 
       
       setDataState(responseData);
-      console.log('test');
     })
     handleContainerStatus();
   };
@@ -80,7 +79,8 @@ function App() {
   }
 
   useEffect(() => {
-    setInputText(transcript.text);
+    const lowercase = transcript.text.toLowerCase();
+    setInputText(lowercase);
   }, [transcript.text]);
 
   const [containerStatus, setContainerStatus] = useState("animated-container full");
@@ -88,6 +88,13 @@ function App() {
   const handleContainerStatus = () => {
     setContainerStatus("animated-container top-container");
   };
+
+  function sanitizeData(text) {
+    if (text.includes('c.s.a.t') || text.includes('c-set')) {
+      text = text.replace('c.s.a.t', 'csat').replace('c.set', 'csat');
+    }
+  
+  }
 
   return (
     <div className="center">
