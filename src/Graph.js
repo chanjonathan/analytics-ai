@@ -18,6 +18,11 @@ function Graph({ labels, counts }) {
           }]
         },
         options: {
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
           scales: {
             y: {
               beginAtZero: true,
