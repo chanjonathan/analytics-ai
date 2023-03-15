@@ -93,7 +93,7 @@ function App() {
             <FaMicrophone className="microphone-icon" onClick={handleRecord} />
           )}
         </div>
-      <button onClick={handleContainerStatus}>Submit</button>
+      <button className="button" onClick={handleContainerStatus}>Submit</button>
       </div>
       <div className="graph-container">
       <Graph />

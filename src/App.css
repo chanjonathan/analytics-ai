@@ -4,6 +4,15 @@
   background-color: white;
 }
 
+.button {
+  border-radius: 3px;
+}
+
+.button:hover {
+  background-color: rgb(61,56,53); /* Green */
+  color: white;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -25,8 +34,10 @@
   top: 0;
   left: 0;
   width: 100%;
-  /* background-color: linear-gradient(to right, black, black); */
   transition: height 1s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .animated-container > div {
@@ -35,6 +46,9 @@
 
 .top-container {
   height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .light {
@@ -82,7 +96,7 @@
   align-items: center;
   width: 100%;
   max-width: 600px;
-  height: 500px,
+  height: 500px;
 }
 
 .graph-container canvas {
