@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import Chart from 'chart.js/auto';
 
-function Graph() {
+function Graph({ labels, counts }) {
   const chartContainer = useRef(null);
   
   useEffect(() => {
@@ -9,10 +9,10 @@ function Graph() {
       const chartConfig = {
         type: 'bar',
         data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+          labels,
           datasets: [{
             label: 'Sales',
-            data: [10, 20, 30, 25, 15, 5],
+            data: counts,
             backgroundColor: 'rgb(61,56,53)',
             borderColor: 'black',
           }]
