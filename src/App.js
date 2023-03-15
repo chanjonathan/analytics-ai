@@ -1,5 +1,5 @@
-import React from 'react';
-import { FaMicrophone } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+import { FaMicrophone, FaStop } from 'react-icons/fa';
 import Graph from './Graph';
 import './App.css';
 import { useWhisper } from '@chengsokdara/use-whisper'
@@ -20,16 +20,45 @@ function App() {
     apiKey: JONATHAN_OPENAI_KEY
   })
 
-  
+  const [inputText, setInputText] = useState('');
+  const [recordingState, setRecordingState] = useState(false);
+
+  const handleRecord = () => {
+    setRecordingState(true);
+    startRecording();
+  }
+
+  const handleStop = () => {
+    setRecordingState(false);
+    stopRecording();
+  }
+
+  const handleInputChange = (event) => {
+    const newValue = event.target.value;
+    setInputText(newValue);
+  }
+
+  const handleSubmit = () => {
+  }
+
+  useEffect(() => {
+    setInputText(transcript.text);
+  }, [transcript.text]);
 
   return (
     <div className="container">
       <div className="input-container">
-        <input type="text" className="input" value={transcript.text}/>
-        <button onClick={startRecording}>Record</button>
-        <button onClick={stopRecording}>Stop</button>
-        <FaMicrophone className="microphone-icon" />
+        <input type="text" className="input" value={inputText} onChange={handleInputChange}/>
+        <div>        
+          {recordingState ?
+                    
+                    <FaStop className="stop-icon" onClick={handleStop} />
+                    :
+                    <FaMicrophone className="microphone-icon" onClick={handleRecord} />
+          }
+        </div>
       </div>
+      <button onClick={handleSubmit}>Submit</button>
       <Graph />
     </div>
   );
