@@ -19,6 +19,7 @@ function App() {
     stopRecording,
   } = useWhisper({
     apiKey: JONATHAN_OPENAI_KEY,
+    stopTimeout: 1000,
   });
 
   const configuration = new Configuration({
@@ -67,26 +68,36 @@ function App() {
     setInputText(transcript.text);
   }, [transcript.text]);
 
+  const [containerStatus, setContainerStatus] = useState("animated-container full");
+
+  const handleContainerStatus = () => {
+    setContainerStatus("animated-container top-container");
+  };
+
   return (
     <div className="container">
-      <h1 className="title">
-        Analytics<span className="light">AI</span>
-      </h1>
-      <div className="input-container">
-        <input
-          type="text"
-          className="input"
-          value={inputText}
-          onChange={handleInputChange}
-        />
-        {recording ? (
-          <FaStop className="stop-icon" onClick={handleStop} />
-        ) : (
-          <FaMicrophone className="microphone-icon" onClick={handleRecord} />
-        )}
+      <div className={containerStatus}>
+        <h1 className="title">
+          Analytics<span className="light">AI</span>
+        </h1>
+        <div className="input-container">
+          <input
+            type="text"
+            className="input"
+            value={inputText}
+            onChange={handleInputChange}
+          />
+          {recording ? (
+            <FaStop className="stop-icon" onClick={handleStop} />
+          ) : (
+            <FaMicrophone className="microphone-icon" onClick={handleRecord} />
+          )}
+        </div>
+      <button onClick={handleContainerStatus}>Submit</button>
       </div>
-      <button onClick={handleSubmit}>Submit</button>
+      <div className="graph-container">
       <Graph />
+      </div>
     </div>
   );
 }
