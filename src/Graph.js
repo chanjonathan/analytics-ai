@@ -1,18 +1,20 @@
 import React, { useRef, useEffect } from 'react';
 import Chart from 'chart.js/auto';
 
-function Graph({ labels, counts }) {
+function Graph({ props } ) {
   const chartContainer = useRef(null);
   
+  console.log(props);
+
   useEffect(() => {
     if (chartContainer && chartContainer.current) {
       const chartConfig = {
         type: 'bar',
         data: {
-          labels,
+          labels: props.label,
           datasets: [{
             label: 'Sales',
-            data: counts,
+            data: props.count,
             backgroundColor: 'rgb(61,56,53)',
             borderColor: 'black',
           }]
@@ -35,12 +37,12 @@ function Graph({ labels, counts }) {
       };
       
       const chart = new Chart(chartContainer.current, chartConfig);
-      
+      console.log(props);
       return () => {
         chart.destroy();
       }
     }
-  }, []);
+  }, [props]);
   
   return (
     <div className="graph-container">
