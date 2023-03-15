@@ -43,7 +43,7 @@ function App() {
     setInputText(newValue);
   };
 
-  const [dataState, setDataState] = useState({ labels: [], counts: [] });
+  const [dataState, setDataState] = useState({ label: [], count: [] });
 
   async function handleSubmit() {
     const sqlString = JSON.stringify({ query: 'select \"NPS\" as label, count(*) from public.\"McDonald_Survey\" group by \"NPS\";' });
@@ -56,7 +56,12 @@ function App() {
       }
     });
     // const graphData = await fetch(jsonResponse.json());
-    jsonResponse.json().then((responseData) => { setDataState(responseData) })
+    jsonResponse.json().then((responseData) => { 
+      
+      setDataState(responseData);
+      console.log('test');
+    })
+    handleContainerStatus();
   };
 
   async function getSQL() {
@@ -85,25 +90,27 @@ function App() {
   };
 
   return (
-    <div className="container">
+    <div className="center">
       <div className={containerStatus}>
-        <h1 className="title">
-          Analytics<span className="light">AI</span>
-        </h1>
-        <div className="input-container">
-          <input
-            type="text"
-            className="input"
-            value={inputText}
-            onChange={handleInputChange}
-          />
-          {recording ? (
-            <FaStop className="stop-icon" onClick={handleStop} />
-          ) : (
-            <FaMicrophone className="microphone-icon" onClick={handleRecord} />
-          )}
+        <div className="center center-box">
+          <h1 className="title">
+            Analytics<span className="light">AI</span>
+          </h1>
+          <div className="input-container">
+            <input
+              type="text"
+              className="input"
+              value={inputText}
+              onChange={handleInputChange}
+            />
+            {recording ? (
+              <FaStop className="stop-icon" onClick={handleStop} />
+            ) : (
+              <FaMicrophone className="microphone-icon" onClick={handleRecord} />
+            )}
+          </div>
+          <button className="button" onClick={handleSubmit}>Submit</button>
         </div>
-      <button className="button" onClick={handleContainerStatus}>Submit</button>
       </div>
       <div className="graph-container">
       <Graph props={ dataState }/>
