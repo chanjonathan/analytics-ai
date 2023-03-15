@@ -43,13 +43,23 @@ function App() {
     setInputText(newValue);
   };
 
-  const handleSubmit = () => {
-    submit().then((response) => {
-      console.log(response.data.choices[0].text);
+  const [dataState, setDataState] = useState({ labels: [], counts: [] });
+
+  async function handleSubmit() {
+    const sqlString = JSON.stringify({ query: 'select \"NPS\" as label, count(*) from public.\"McDonald_Survey\" group by \"NPS\";' });
+    // const sqlString = await getSQL();
+    const jsonResponse = await fetch('http://10.20.77.37:8080/runquery', {
+      method: 'POST',
+      body: sqlString,
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
+    // const graphData = await fetch(jsonResponse.json());
+    jsonResponse.json().then((responseData) => { setDataState(responseData) })
   };
 
-  async function submit() {
+  async function getSQL() {
     const response = await openai.createCompletion({
       model: "text-davinci-003",
       prompt:
@@ -93,10 +103,10 @@ function App() {
             <FaMicrophone className="microphone-icon" onClick={handleRecord} />
           )}
         </div>
-      <button onClick={handleContainerStatus}>Submit</button>
+      <button onClick={handleSubmit}>Submit</button>
       </div>
       <div className="graph-container">
-      <Graph />
+      <Graph props={ dataState }/>
       </div>
     </div>
   );
