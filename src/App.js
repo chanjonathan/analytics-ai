@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { FaMicrophone, FaStop } from 'react-icons/fa';
-import Graph from './Graph';
-import './App.css';
-import { useWhisper } from '@chengsokdara/use-whisper'
+import React, { useEffect, useState } from "react";
+import { FaMicrophone, FaStop } from "react-icons/fa";
+import Graph from "./Graph";
+import "./App.css";
+import { useWhisper } from "@chengsokdara/use-whisper";
 
-const JONATHAN_OPENAI_KEY = "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";
+const JONATHAN_OPENAI_KEY =
+  "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";
 
 function App() {
-
   const {
     recording,
     speaking,
@@ -17,29 +17,27 @@ function App() {
     startRecording,
     stopRecording,
   } = useWhisper({
-    apiKey: JONATHAN_OPENAI_KEY
-  })
+    apiKey: JONATHAN_OPENAI_KEY,
+    nonStop: true,
+    stopTimeout: 1000,
+  });
 
-  const [inputText, setInputText] = useState('');
-  const [recordingState, setRecordingState] = useState(false);
+  const [inputText, setInputText] = useState("");
 
   const handleRecord = () => {
-    setRecordingState(true);
     startRecording();
-  }
+  };
 
   const handleStop = () => {
-    setRecordingState(false);
     stopRecording();
-  }
+  };
 
   const handleInputChange = (event) => {
     const newValue = event.target.value;
     setInputText(newValue);
-  }
+  };
 
-  const handleSubmit = () => {
-  }
+  const handleSubmit = () => {};
 
   useEffect(() => {
     setInputText(transcript.text);
@@ -47,16 +45,20 @@ function App() {
 
   return (
     <div className="container">
-      <h1>Text to Dashboard</h1>
+      <h1 className="title">Text to Dashboard</h1>
       <div className="input-container">
-        <input type="text" className="input" value={inputText} onChange={handleInputChange}/>
-        <div>        
-          {recordingState ?
-                    
-                    <FaStop className="stop-icon" onClick={handleStop} />
-                    :
-                    <FaMicrophone className="microphone-icon" onClick={handleRecord} />
-          }
+        <input
+          type="text"
+          className="input"
+          value={inputText}
+          onChange={handleInputChange}
+        />
+        <div>
+          {recording ? (
+            <FaStop className="stop-icon" onClick={handleStop} />
+          ) : (
+            <FaMicrophone className="microphone-icon" onClick={handleRecord} />
+          )}
         </div>
       </div>
       <button onClick={handleSubmit}>Submit</button>
