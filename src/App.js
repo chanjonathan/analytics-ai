@@ -24,6 +24,7 @@ function App() {
 
   return (
     <div className="container">
+      <h1>Text to Dashboard</h1>
       <div className="input-container">
         <input type="text" className="input" value={transcript.text}/>
         <button onClick={startRecording}>Record</button>

@@ -21,7 +21,9 @@ function Graph() {
             y: {
               beginAtZero: true
             }
-          }
+          },
+          responsive: true,
+          maintainAspectRatio: false
         }
       };
       
