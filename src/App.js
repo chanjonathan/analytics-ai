@@ -6,6 +6,7 @@ import './App.css';
 function App() {
   return (
     <div className="container">
+      <h1>Text to Dashboard</h1>
       <div className="input-container">
         <input type="text" className="input" />
         <FaMicrophone className="microphone-icon" />
