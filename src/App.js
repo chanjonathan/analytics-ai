@@ -45,7 +45,7 @@ function App() {
 
   return (
     <div className="container">
-      <h1 className="title">Text to Dashboard</h1>
+      <h1 className="title">Analytics<span className="light">AI</span></h1>
       <div className="input-container">
         <input
           type="text"
@@ -53,7 +53,7 @@ function App() {
           value={inputText}
           onChange={handleInputChange}
         />
-        <div>
+        <div className="icon-container">
           {recording ? (
             <FaStop className="stop-icon" onClick={handleStop} />
           ) : (
