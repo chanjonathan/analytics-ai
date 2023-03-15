@@ -3,6 +3,7 @@ import { FaMicrophone, FaStop } from 'react-icons/fa';
 import Graph from './Graph';
 import './App.css';
 import { useWhisper } from '@chengsokdara/use-whisper'
+const { Configuration, OpenAIApi } = require("openai");
 
 const JONATHAN_OPENAI_KEY = "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";
 
@@ -20,16 +21,19 @@ function App() {
     apiKey: JONATHAN_OPENAI_KEY
   })
 
+  const configuration = new Configuration({
+    apiKey: JONATHAN_OPENAI_KEY,
+  });
+
+  const openai = new OpenAIApi(configuration);
+
   const [inputText, setInputText] = useState('');
-  const [recordingState, setRecordingState] = useState(false);
 
   const handleRecord = () => {
-    setRecordingState(true);
     startRecording();
   }
 
   const handleStop = () => {
-    setRecordingState(false);
     stopRecording();
   }
 
@@ -39,11 +43,27 @@ function App() {
   }
 
   const handleSubmit = () => {
+    submit().then((response) => {
+      console.log(response.data.choices[0].text);
+    })
   }
 
-  useEffect(() => {
-    setInputText(transcript.text);
-  }, [transcript.text]);
+async function submit() {
+  const response = await openai.createCompletion({
+    model: "text-davinci-003",
+    prompt: "input:  Pull up the dashboard for total participants in Canada who dined out at McDonalds\noutput: country=\"Canada\"?restaurant=\"McDonalds\"\n" + inputText,
+    temperature: 0.7,
+    max_tokens: 256,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+  });
+  return response;
+}
+  
+useEffect(() => {
+  setInputText(transcript.text);
+}, [transcript.text]);
 
   return (
     <div className="container">
@@ -51,11 +71,10 @@ function App() {
       <div className="input-container">
         <input type="text" className="input" value={inputText} onChange={handleInputChange}/>
         <div>        
-          {recordingState ?
-                    
-                    <FaStop className="stop-icon" onClick={handleStop} />
-                    :
-                    <FaMicrophone className="microphone-icon" onClick={handleRecord} />
+          {recording ?
+            <FaStop className="stop-icon" onClick={handleStop} />
+            :
+            <FaMicrophone className="microphone-icon" onClick={handleRecord} />
           }
         </div>
       </div>
