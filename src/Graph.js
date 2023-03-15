@@ -13,13 +13,15 @@ function Graph() {
           datasets: [{
             label: 'Sales',
             data: [10, 20, 30, 25, 15, 5],
-            backgroundColor: '#007bff'
+            backgroundColor: 'rgb(61,56,53)',
+            borderColor: 'black',
           }]
         },
         options: {
           scales: {
             y: {
-              beginAtZero: true
+              beginAtZero: true,
+              fontColor: 'black',
             }
           },
           responsive: true,
@@ -37,7 +39,7 @@ function Graph() {
   
   return (
     <div className="graph-container">
-      <h2>Graph</h2>
+      <h2>Insert Title Here</h2>
       <canvas ref={chartContainer}></canvas>
     </div>
   );
