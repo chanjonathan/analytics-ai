@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap');
 
-* {
-  background-color: rgb(255,176,77);
+.graph-container {
+  background-color: white;
 }
 
 .container {
@@ -13,6 +13,28 @@
 
 .icon-container{
   background-color: white;
+}
+
+.full {
+  height: 100%;
+}
+
+.animated-container {
+  background-color: rgb(255,176,77);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* background-color: linear-gradient(to right, black, black); */
+  transition: height 1s;
+}
+
+.animated-container > div {
+  position: unset;
+}
+
+.top-container {
+  height: 250px;
 }
 
 .light {
@@ -54,10 +76,10 @@
 }
 
 .graph-container {
+  margin-top: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
   width: 100%;
   max-width: 600px;
   height: 500px,
