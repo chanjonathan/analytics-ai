@@ -8,6 +8,24 @@ const { Configuration, OpenAIApi } = require("openai");
 const JONATHAN_OPENAI_KEY =
   "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";
 
+const PROMPT = `give me nps score count for mcdonald survey completion
+{\"query\":\"select \\\"NPS\\\", count(*) from public.\\\"McDonald_Survey\\\" group by \\\"NPS\\\"\",\"title\":\"NPS\",\"x-label\":\"NPS Score\",\"y-label\":\"Count\",\"chart-type\":\"bar\"}
+
+give me the csat score for mcdonald survey
+{\"query\":\"select mds.\\\"name\\\", count(*) from public.\\\"McDonald_Survey\\\" as ms join public.\\\"McDonald_DataSet\\\" as mds on ms.\\\"id\\\"= mds.\\\"entity_data_id\\\" and mds.\\\"attribute_id\\\"=10 group by mds.\\\"name\\\"\",\"title\":\"CSAT\",\"x-label\":\"CSAT Score\",\"y-label\":\"Count\",\"chart-type\":\"pie\"}
+
+give me the csat score
+{\"query\":\"select mds.\\\"name\\\", count(*) from public.\\\"McDonald_Survey\\\" as ms join public.\\\"McDonald_DataSet\\\" as mds on ms.\\\"id\\\"= mds.\\\"entity_data_id\\\" and mds.\\\"attribute_id\\\"=10 group by mds.\\\"name\\\"\",\"title\":\"CSAT\",\"x-label\":\"CSAT Score\",\"y-label\":\"Count\",\"chart-type\":\"pie\"}
+
+give me nps score count
+{\"query\":\"select \\\"NPS\\\", count(*) from public.\\\"McDonald_Survey\\\" group by \\\"NPS\\\"\",\"title\":\"NPS\",\"x-label\":\"NPS Score\",\"y-label\":\"Count\",\"chart-type\":\"bar\"}
+
+give me nps score count for mcdonald survey"
+{\"query\":\"select \\\"NPS\\\", count(*) from public.\\\"McDonald_Survey\\\" group by \\\"NPS\\\"\",\"title\":\"NPS\",\"x-label\":\"NPS Score\",\"y-label\":\"Count\",\"chart-type\":\"bar\"}
+
+hey pull up the csat score the the mcdonalds survey
+{\"query\":\"select mds.\\\"name\\\", count(*) from public.\\\"McDonald_Survey\\\" as ms join public.\\\"McDonald_DataSet\\\" as mds on ms.\\\"id\\\"= mds.\\\"entity_data_id\\\" and mds.\\\"attribute_id\\\"=10 group by mds.\\\"name\\\"\",\"title\":\"CSAT\",\"x-label\":\"CSAT Score\",\"y-label\":\"Count\",\"chart-type\":\"pie\"}`
+
 function App() {
   const {
     recording,
@@ -31,10 +49,14 @@ function App() {
   const [inputText, setInputText] = useState("");
 
   const handleRecord = () => {
+    setContainerStatus('animated-container full')
+    setInputText('');
+    muteChange = true;
     startRecording();
   };
 
   const handleStop = () => {
+    muteChange = false;
     stopRecording();
   };
 
@@ -44,43 +66,50 @@ function App() {
   };
 
   const [dataState, setDataState] = useState({ label: [], count: [] });
+  let muteChange = false;
+  const [config, setConfig] = useState({});
 
-  async function handleSubmit() {
-    const sqlString = JSON.stringify({ query: 'select \"NPS\" as label, count(*) from public.\"McDonald_Survey\" group by \"NPS\";' });
-    // const sqlString = await getSQL();
+  async function handleSubmit(input) {
+    const sqlString = await getSQL(input);
+    const jsonQuery = JSON.stringify({ query: sqlString })
     const jsonResponse = await fetch('http://10.20.77.37:8080/runquery', {
       method: 'POST',
-      body: sqlString,
+      body: jsonQuery,
       headers: {
         'Content-Type': 'application/json'
       }
     });
-    // const graphData = await fetch(jsonResponse.json());
     jsonResponse.json().then((responseData) => { 
-      
       setDataState(responseData);
     })
     handleContainerStatus();
   };
 
-  async function getSQL() {
+  async function getSQL(input) {
     const response = await openai.createCompletion({
       model: "text-davinci-003",
       prompt:
-        'input:  Pull up the dashboard for total participants in Canada who dined out at McDonalds\noutput: country="Canada"?restaurant="McDonalds"\n' +
-        inputText,
+        PROMPT +
+        '\n' + input,
       temperature: 0.7,
       max_tokens: 256,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0,
     });
-    return response;
+    const json = response.data.choices[0].text
+    const answerObject = JSON.parse(json);
+    let answer = answerObject.query;
+    setConfig(answerObject);
+    return answer;
   }
 
   useEffect(() => {
-    const lowercase = transcript.text.toLowerCase();
-    setInputText(lowercase);
+    const transcriptText = transcript.text ||'';
+    setInputText(transcriptText);
+    if (transcriptText && !muteChange) {
+      handleSubmit(transcriptText);
+    }
   }, [transcript.text]);
 
   const [containerStatus, setContainerStatus] = useState("animated-container full");
@@ -89,12 +118,6 @@ function App() {
     setContainerStatus("animated-container top-container");
   };
 
-  function sanitizeData(text) {
-    if (text.includes('c.s.a.t') || text.includes('c-set')) {
-      text = text.replace('c.s.a.t', 'csat').replace('c.set', 'csat');
-    }
-  
-  }
 
   return (
     <div className="center">
@@ -116,11 +139,10 @@ function App() {
               <FaMicrophone className="microphone-icon" onClick={handleRecord} />
             )}
           </div>
-          <button className="button" onClick={handleSubmit}>Submit</button>
         </div>
       </div>
       <div className="graph-container">
-      <Graph props={ dataState }/>
+      <Graph props={ { dataState, config } }/>
       </div>
     </div>
   );
